@@ -5,7 +5,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
-const crypto = require('crypto');
 
 const UserSchema = new Schema ({
 
@@ -20,7 +19,7 @@ const UserSchema = new Schema ({
 UserSchema.pre('save', function(next) {
   let user = this;
   //if (!user.isModified('password')) return next();
-  
+
 
   bcrypt.genSalt(10,(err, salt)=>{
     if (err) return next(err);
@@ -30,18 +29,10 @@ UserSchema.pre('save', function(next) {
 
       user.password = hash;
       next();
-      
+
     });
   });
 });
 
-
-UserSchema.methods.gravatar = function(){
-  if (!this.email) return 'https://gravatar.com/avartar/?s=200&d=retro';
-
-  // md5 es una funcion has que el que pone por defecto gravatar en el url de los avatares
-  const md5 = crypto.createHash('mds').update(this.email).digest('hex');
-  return `https://gravatar.com/avatar/${md5}?=200&d=retro`;
-};
 
 module.exports = mongoose.model('User', UserSchema);
